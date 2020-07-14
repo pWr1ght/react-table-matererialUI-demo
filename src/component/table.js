@@ -24,6 +24,8 @@ import FormControl from '@material-ui/core/FormControl';
 import {Input, InputLabel, FormHelperText} from '@material-ui/core/';
 import {TextField, Button} from '@material-ui/core/'
 import {TableContext} from '../context/tableContext';
+import EnhancedTableHead from './tableHead'
+import EnhancedTableToolbar from './tableToolBar'
 
 // // the function that grabs the rows
 // function createData(symbol, stockChange, marketCap, sharePrice, chart) {
@@ -47,202 +49,202 @@ import {TableContext} from '../context/tableContext';
 //   createData('Oreo', 437, 18.0, 63, 4.0),
 // ];
 
-// function that descends the rows
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+// // function that descends the rows
+// function descendingComparator(a, b, orderBy) {
+//   if (b[orderBy] < a[orderBy]) {
+//     return -1;
+//   }
+//   if (b[orderBy] > a[orderBy]) {
+//     return 1;
+//   }
+//   return 0;
+// }
 
 
-//function that compares to descend
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
+// //function that compares to descend
+// function getComparator(order, orderBy) {
+//   return order === 'desc'
+//     ? (a, b) => descendingComparator(a, b, orderBy)
+//     : (a, b) => -descendingComparator(a, b, orderBy);
+// }
 
 
 
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+// function stableSort(array, comparator) {
+//   const stabilizedThis = array.map((el, index) => [el, index]);
+//   stabilizedThis.sort((a, b) => {
+//     const order = comparator(a[0], b[0]);
+//     if (order !== 0) return order;
+//     return a[1] - b[1];
+//   });
+//   return stabilizedThis.map((el) => el[0]);
+// }
 
 // heading cells and there indentifiers
 
-const headCells = [
-  { id: 'symbol', numeric: false, disablePadding: true, label: 'Stock Ticker' },
-  { id: 'stockChange', numeric: true, disablePadding: false, label: '24 hr. change' },
-  { id: 'marketCap', numeric: true, disablePadding: false, label: 'marketCap (USD) ' },
-  { id: 'sharePrice', numeric: true, disablePadding: false, label: 'Share Price' },
-  { id: 'chart', numeric: false, disablePadding: false, label: 'chart' },
-];
+// const headCells = [
+//   { id: 'symbol', numeric: false, disablePadding: true, label: 'Stock Ticker' },
+//   { id: 'stockChange', numeric: true, disablePadding: false, label: '24 hr. change' },
+//   { id: 'marketCap', numeric: true, disablePadding: false, label: 'marketCap (USD) ' },
+//   { id: 'sharePrice', numeric: true, disablePadding: false, label: 'Share Price' },
+//   { id: 'chart', numeric: false, disablePadding: false, label: 'chart' },
+// ];
 
-function EnhancedTableHead(props) {
-  // number of selected  
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-};
+// function EnhancedTableHead(props) {
+//     // number of selected  
+//     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+//     const createSortHandler = (property) => (event) => {
+//         onRequestSort(event, property);
+//     };
 
-const sortTableComponent = (id, headCellName) => {
-            return (<TableSortLabel
-              active={orderBy === id}
-              direction={orderBy === id ? order : 'asc'}
-              onClick={createSortHandler(id)}
-            >
-              {headCellName}
-              {orderBy === id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>)
-}
+// const sortTableComponent = (id, headCellName) => {
+//     return (<TableSortLabel
+//         active={orderBy === id}
+//         direction={orderBy === id ? order : 'asc'}
+//         onClick={createSortHandler(id)}
+//     >
+//         {headCellName}
+//         {orderBy === id ? (
+//         <span className={classes.visuallyHidden}>
+//             {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+//         </span>
+//         ) : null}
+//     </TableSortLabel>)
+// }
 
   
 
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all symbols' }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            { headCell.id !== 'chart' ? (
-                <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                >
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                    <span className={classes.visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                    </span>
-                    ) : null}
-                </TableSortLabel>
-                ) : headCell.label
-            }
+//   return (
+//     <TableHead>
+//       <TableRow>
+//         <TableCell padding="checkbox">
+//           <Checkbox
+//             indeterminate={numSelected > 0 && numSelected < rowCount}
+//             checked={rowCount > 0 && numSelected === rowCount}
+//             onChange={onSelectAllClick}
+//             inputProps={{ 'aria-label': 'select all symbols' }}
+//           />
+//         </TableCell>
+//         {headCells.map((headCell) => (
+//           <TableCell
+//             key={headCell.id}
+//             align={headCell.numeric ? 'right' : 'left'}
+//             padding={headCell.disablePadding ? 'none' : 'default'}
+//             sortDirection={orderBy === headCell.id ? order : false}
+//           >
+//             { headCell.id !== 'chart' ? (
+//                 <TableSortLabel
+//                     active={orderBy === headCell.id}
+//                     direction={orderBy === headCell.id ? order : 'asc'}
+//                     onClick={createSortHandler(headCell.id)}
+//                 >
+//                     {headCell.label}
+//                     {orderBy === headCell.id ? (
+//                     <span className={classes.visuallyHidden}>
+//                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+//                     </span>
+//                     ) : null}
+//                 </TableSortLabel>
+//                 ) : headCell.label
+//             }
 
-            {/* { headCell.id !== 'chart' ? 
-                sortTableComponent(headCell.id, headCell.label) 
-                : headCell.label
-            } */}
-            {/* make sortable */}
-            {/* {headCell.id} */}
+//             {/* { headCell.id !== 'chart' ? 
+//                 sortTableComponent(headCell.id, headCell.label) 
+//                 : headCell.label
+//             } */}
+//             {/* make sortable */}
+//             {/* {headCell.id} */}
 
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
+//           </TableCell>
+//         ))}
+//       </TableRow>
+//     </TableHead>
+//   );
+// }
 
-EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
+// EnhancedTableHead.propTypes = {
+//   classes: PropTypes.object.isRequired,
+//   numSelected: PropTypes.number.isRequired,
+//   onRequestSort: PropTypes.func.isRequired,
+//   onSelectAllClick: PropTypes.func.isRequired,
+//   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+//   orderBy: PropTypes.string.isRequired,
+//   rowCount: PropTypes.number.isRequired,
+// };
 
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-  title: {
-    flex: '1 1 100%',
-  },
-}));
+// const useToolbarStyles = makeStyles((theme) => ({
+//   root: {
+//     paddingLeft: theme.spacing(2),
+//     paddingRight: theme.spacing(1),
+//   },
+//   highlight:
+//     theme.palette.type === 'light'
+//       ? {
+//           color: theme.palette.secondary.main,
+//           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+//         }
+//       : {
+//           color: theme.palette.text.primary,
+//           backgroundColor: theme.palette.secondary.dark,
+//         },
+//   title: {
+//     flex: '1 1 100%',
+//   },
+// }));
 
-const EnhancedTableToolbar = (props) => {
-  const classes = useToolbarStyles();
-  const {rows, setRows, money, setMoney} = useContext(TableContext)
-  const {setSelected, selected, numSelected } = props;
+// const EnhancedTableToolbar = (props) => {
+//   const classes = useToolbarStyles();
+//   const {rows, setRows, money, setMoney} = useContext(TableContext)
+//   const {setSelected, selected, numSelected } = props;
 
-  const deleteRow = () => {
-    console.log(selected);
-    const rowArray = props.rows.filter(row => {
-        if(!selected.includes(row.symbol)) {
-            return row;
-        } 
-    })
-    setRows(rowArray);
-    console.log("this is leftOver", rowArray)
-                console.log(selected)
-                setSelected([])
-  }
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Stocks
-        </Typography>
-      )}
-      {/* button for Deleting   */}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton onClick={deleteRow} aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-};
+//   const deleteRow = () => {
+//     console.log(selected);
+//     const rowArray = props.rows.filter(row => {
+//         if(!selected.includes(row.symbol)) {
+//             return row;
+//         } 
+//     })
+//     setRows(rowArray);
+//     console.log("this is leftOver", rowArray)
+//                 console.log(selected)
+//                 setSelected([])
+//   }
+//   return (
+//     <Toolbar
+//       className={clsx(classes.root, {
+//         [classes.highlight]: numSelected > 0,
+//       })}
+//     >
+//       {numSelected > 0 ? (
+//         <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+//           {numSelected} selected
+//         </Typography>
+//       ) : (
+//         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+//           Stocks
+//         </Typography>
+//       )}
+//       {/* button for Deleting   */}
+//       {numSelected > 0 ? (
+//         <Tooltip title="Delete">
+//           <IconButton onClick={deleteRow} aria-label="delete">
+//             <DeleteIcon />
+//           </IconButton>
+//         </Tooltip>
+//       ) : (
+//         <Tooltip title="Filter list">
+//           <IconButton aria-label="filter list">
+//             <FilterListIcon />
+//           </IconButton>
+//         </Tooltip>
+//       )}
+//     </Toolbar>
+//   );
+// };
 
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
+// EnhancedTableToolbar.propTypes = {
+//   numSelected: PropTypes.number.isRequired,
+// };
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -269,20 +271,51 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable() {
-  const {rows, setRows, money, setMoney} = useContext(TableContext)
-  const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('stockChange');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [currentTicker, setCurrentTicker] = React.useState('');
+    const {rows, setRows, money, setMoney} = useContext(TableContext)
+    const classes = useStyles();
+    const [order, setOrder] = React.useState('asc');
+    const [orderBy, setOrderBy] = React.useState('stockChange');
+    const [selected, setSelected] = React.useState([]);
+    const [page, setPage] = React.useState(0);
+    const [dense, setDense] = React.useState(false);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [currentTicker, setCurrentTicker] = React.useState('');
+
+
+    // function that descends the rows
+    function descendingComparator(a, b, orderBy) {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+        return 0;
+    }
+  
+  
+    //function that compares to descend
+    function getComparator(order, orderBy) {
+        return order === 'desc'
+        ? (a, b) => descendingComparator(a, b, orderBy)
+        : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
 
     // the function that grabs the rows
     function createData(symbol, stockChange, marketCap, sharePrice, chart) {
         return { symbol, stockChange, marketCap, sharePrice, chart};
     }
+
+    function stableSort(array, comparator) {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+          const order = comparator(a[0], b[0]);
+          if (order !== 0) return order;
+          return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+      }
     
     // the rows
     // const rows = [
